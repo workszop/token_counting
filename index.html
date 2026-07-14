@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Count Gemini text tokens locally in your browser."
+    />
+    <title>Gemini Token Counter — Browser Edition</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Token Counter home">
+        <span class="brand-mark" aria-hidden="true">T</span>
+        <span>Token Counter</span>
+        <small>Browser edition</small>
+      </a>
+      <div class="local-badge">
+        <span class="status-dot" aria-hidden="true"></span>
+        Runs in this tab
+      </div>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Static · private · model-specific</p>
+        <h1 id="page-title">Count Gemini tokens <em>in your browser.</em></h1>
+        <p class="lede">
+          No server and no API key. Your text stays in this tab while the
+          tokenizer runs inside a Web Worker.
+        </p>
+      </section>
+
+      <section class="workspace" aria-label="Token counter workspace">
+        <div class="editor-panel">
+          <div class="panel-toolbar">
+            <label class="model-field" for="model">
+              <span>Model</span>
+              <select id="model" name="model">
+                <option value="gemini-4-flash-preview">Gemini 4 Flash Preview</option>
+                <option value="gemini-3.5-flash" selected>Gemini 3.5 Flash</option>
+                <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
+                <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+              </select>
+            </label>
+            <div class="toolbar-actions">
+              <input
+                id="file-input"
+                type="file"
+                accept=".txt,.md,.json,.csv,.html,.css,.js,.ts,.py,text/*,application/json"
+                hidden
+              />
+              <button class="button button-quiet" id="load-file" type="button">
+                Load file
+              </button>
+              <button class="button button-quiet" id="clear" type="button">
+                Clear all
+              </button>
+            </div>
+          </div>
+
+          <div class="editor-wrap" id="drop-zone">
+            <div class="request-list" id="request-list">
+              <article class="request-card">
+                <div class="request-card-header">
+                  <label class="request-label" for="request-1">
+                    <span>Request 1</span>
+                    <span class="request-token-count">Not counted</span>
+                  </label>
+                  <button class="remove-request" type="button" hidden>Remove</button>
+                </div>
+                <textarea
+                  id="request-1"
+                  class="request-text"
+                  placeholder="Paste a prompt, document, or code here…"
+                  spellcheck="false"
+                ></textarea>
+              </article>
+            </div>
+            <div class="drop-message" aria-hidden="true">Drop a text file here</div>
+          </div>
+
+          <div class="editor-footer">
+            <label class="toggle" for="show-tokens">
+              <input id="show-tokens" type="checkbox" checked />
+              <span class="toggle-track" aria-hidden="true"></span>
+              Show token IDs
+            </label>
+            <div class="count-actions">
+              <button class="button button-add" id="add-request" type="button">
+                + Add request
+              </button>
+              <button class="button button-primary" id="count" type="button">
+                Count tokens
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="results-panel" aria-live="polite" aria-busy="false">
+          <div class="result-heading">
+            <span>Total input tokens</span>
+            <span class="result-state" id="result-state">Ready</span>
+          </div>
+          <strong class="token-total" id="token-total">0</strong>
+          <p class="model-used" id="model-used">gemini-3.5-flash</p>
+
+          <dl class="metrics">
+            <div><dt>Characters</dt><dd id="characters">0</dd></div>
+            <div><dt>Words</dt><dd id="words">0</dd></div>
+            <div><dt>UTF-8 bytes</dt><dd id="bytes">0</dd></div>
+            <div><dt>Requests</dt><dd id="request-count">1</dd></div>
+            <div><dt>Vocabulary</dt><dd id="vocabulary-size">262,144</dd></div>
+            <div><dt>Chars / token</dt><dd id="ratio">—</dd></div>
+          </dl>
+
+          <div class="runtime-note">
+            <span aria-hidden="true">↳</span>
+            <p id="runtime-note">
+              First count downloads the tokenizer files. Your browser caches
+              them for later visits.
+            </p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="token-section" id="token-section" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Token map</p>
+            <h2>Tokens by request</h2>
+          </div>
+          <p>Piece · token ID</p>
+        </div>
+        <div class="request-breakdowns" id="request-breakdowns"></div>
+      </section>
+
+      <section class="fine-print" aria-label="Privacy and accuracy notes">
+        <h2>Local after loading</h2>
+        <p>
+          The page downloads the Transformers.js runtime from jsDelivr and the
+          Gemma 4 tokenizer from Hugging Face on first use. Only those static
+          files cross the network—your request text does not. Counts cover text
+          only; API usage metadata remains the source of truth for billing.
+        </p>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <template id="request-template">
+      <article class="request-card">
+        <div class="request-card-header">
+          <label class="request-label">
+            <span>Request 1</span>
+            <span class="request-token-count">Not counted</span>
+          </label>
+          <button class="remove-request" type="button">Remove</button>
+        </div>
+        <textarea
+          class="request-text"
+          placeholder="Paste a prompt, document, or code here…"
+          spellcheck="false"
+        ></textarea>
+      </article>
+    </template>
+    <script>
+      window.setTimeout(() => {
+        if (document.documentElement.dataset.appReady === "true") return;
+        const message = location.protocol === "file:"
+          ? "This app must be opened through GitHub Pages or a local HTTP server, not directly as a file."
+          : "The JavaScript app did not load. Confirm that app.js and shared.js were published with index.html.";
+        const toast = document.querySelector("#toast");
+        const note = document.querySelector("#runtime-note");
+        if (toast) {
+          toast.textContent = message;
+          toast.classList.add("is-visible");
+        }
+        if (note) note.textContent = message;
+      }, 3000);
+    </script>
+  </body>
+</html>
