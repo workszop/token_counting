@@ -8,26 +8,31 @@
       content="Count Gemini text tokens locally in your browser."
     />
     <title>Gemini Token Counter — Browser Edition</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="./favicon-180.png" />
+    <link rel="stylesheet" href="./tokens.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
   </head>
-  <body>
+  <body class="edu">
     <header class="site-header">
-      <a class="brand" href="./" aria-label="Token Counter home">
-        <span class="brand-mark" aria-hidden="true">T</span>
-        <span>Token Counter</span>
-        <small>Browser edition</small>
-      </a>
-      <div class="local-badge">
-        <span class="status-dot" aria-hidden="true"></span>
-        Runs in this tab
+      <div class="site-header-inner">
+        <a class="brand" href="./" aria-label="Token Counter home">
+          <img class="brand-mark" src="./edulab-mark-ink.png" alt="" aria-hidden="true" />
+          <span class="brand-word">Token Counter</span>
+          <small>Browser edition</small>
+        </a>
+        <div class="local-badge">
+          <span class="status-dot" aria-hidden="true"></span>
+          Runs in this tab
+        </div>
       </div>
     </header>
 
     <main>
       <section class="intro" aria-labelledby="page-title">
-        <p class="eyebrow">Static · private · model-specific</p>
-        <h1 id="page-title">Count Gemini tokens <em>in your browser.</em></h1>
+        <h1 id="page-title">Count Gemini tokens in your browser.</h1>
         <p class="lede">
           No server and no API key. Your text stays in this tab while the
           tokenizer runs inside a Web Worker.
@@ -130,10 +135,9 @@
       <section class="token-section" id="token-section" hidden>
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Token map</p>
             <h2>Tokens by request</h2>
           </div>
-          <p>Piece · token ID</p>
+          <p class="meta">Piece · token ID</p>
         </div>
         <div class="request-breakdowns" id="request-breakdowns"></div>
       </section>

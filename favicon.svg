@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#FFD500"/>
+  <text x="32" y="34" text-anchor="middle" dominant-baseline="central"
+        font-family="Outfit, 'IBM Plex Sans', system-ui, sans-serif"
+        font-weight="800" font-size="32" fill="#1C1917">42</text>
+</svg>
